@@ -12,46 +12,72 @@
 -- CircuitItems have inputs and outputs
 --
 --
+-- sensorA = Sensor()
+-- sensorB = Sensor()
+--
+-- andGate = ANDGate()
+-- orGate = ANDGate()
+--
+-- sensorA.output.connect(orGate.input.top)
+-- sensorB.output.connect(orGate.input.bottom)
+-- orGate.output.connect(andGate.input.top)
+--
+-- sensorA.fire()
+-- sensorB.fire()
+--
 --]]
 
 
-
-CircuitItem = class({ __ids = 0 })
-
-function CircuitItem.nextId()
-  local n = CircuitItem.__ids
-  CircuitItem.__ids = CircuitItem.__ids + 1
-  return n
+Lead = class()
+function Lead:init(circuitItem)
+  self.input = circuitItem
+  self.output = nil
 end
 
-function CircuitItem:init(edges)
-  self.id = CircuitItem.nextId()
+function Lead:connect(circuitItem)
+  self.output = circuitItem
 end
+
+function Lead:trigger()
+  self.output:trigger()
+end
+
+CircuitItem = class()
 
 ANDGate = class(CircuitItem)
+function ANDGate:init()
+  self.output = Lead.new(self)
+  self.input = { top = Lead.new(self), bottom = Lead.new(self) }
+end
+
 XORGate = class(CircuitItem)
+function XORGate:init()
+  self.output = Lead.new(self)
+  self.input = { top = Lead.new(self), bottom = Lead.new(self) }
+end
+
 ORGate = class(CircuitItem)
+function ORGate:init()
+  self.output = Lead.new(self)
+  self.input = { top = Lead.new(self), bottom = Lead.new(self) }
+end
+
 NOTGate = class(CircuitItem)
+function NOTGate:init()
+  self.output = Lead.new(self)
+  self.input = Lead.new(self)
+end
+
 SPLITGate = class(CircuitItem)
+function SPLITGate:init()
+  self.output = { top = Lead.new(self), bottom = Lead.new(self) }
+  self.input = Lead.new(self)
+end
+
 FLIPFLOPGate = class(CircuitItem)
-
-Circuit = class()
-Circuit.__item_id = 0
-
-function Circuit:nextId()
-  local n = self.__item_id
-  self._item_id = self._item_id + 1
-  return n
-end
-
-function Circuit:init() end
-function Circuit:insert(item)
-
-end
-function Circuit:remove() end
-
-function Circuit:register(name, sensor)
-  self.sensors[name] = sensor
+function FLIPFLOPGate:init()
+  self.output = { top = Lead.new(self), bottom = Lead.new(self) }
+  self.input = { top = Lead.new(self), bottom = Lead.new(self) }
 end
 
 Thruster = class()
