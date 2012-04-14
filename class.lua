@@ -2,7 +2,9 @@ function class (base)
   local c = {}
 
   if base then
-    c = base
+    for k,v in pairs(base) do
+      c[k] = v
+    end
   end
 
   local mt = { __index = c }
@@ -18,8 +20,18 @@ function class (base)
     return o
   end
 
+  function c.mixin(mixable)
+    for k,v in pairs(mixable) do
+      if not c[k] then
+        c[k] = v
+      end
+    end
+  end
+
   return c
 end
+
+--[[
 
 A = class()
 
@@ -48,3 +60,4 @@ B = class(A)
 
 b = B.new(1,2)
 b:print()
+--]]

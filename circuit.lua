@@ -27,6 +27,10 @@
 --
 --]]
 
+require('class')
+require('drawable')
+require('draggable')
+
 
 Lead = class()
 function Lead:init(circuitItem)
@@ -42,36 +46,60 @@ function Lead:trigger()
   self.output:trigger()
 end
 
-CircuitItem = class()
+CircuitItem = class(Drawable)
+CircuitItem.mixin(Draggable)
 
 ANDGate = class(CircuitItem)
-function ANDGate:init()
-  self.output = Lead.new(self)
+function ANDGate:init(args)
+  Drawable.register(self)
+  Draggable.register(self)
+
+  self.name = "and"
+  
+  self.x = args.x
+  self.y = args.y
+  self.image = love.graphics.newImage('and.png')
+  self.dragging = false
+
+  self.output = { Lead.new(self) }
   self.input = { top = Lead.new(self), bottom = Lead.new(self) }
 end
 
 XORGate = class(CircuitItem)
-function XORGate:init()
-  self.output = Lead.new(self)
+function XORGate:init(args)
+  Drawable.register(self)
+  Draggable.register(self)
+  self.x = args.x
+  self.y = args.y
+  self.name = "xor"
+  self.image = love.graphics.newImage('xor.png')
+  self.output = { Lead.new(self) }
   self.input = { top = Lead.new(self), bottom = Lead.new(self) }
 end
 
 ORGate = class(CircuitItem)
-function ORGate:init()
-  self.output = Lead.new(self)
+function ORGate:init(args)
+  Drawable.register(self)
+  Draggable.register(self)
+
+  self.x = args.x
+  self.y = args.y
+  self.name = "or"
+  self.image = love.graphics.newImage('or.png')
+  self.output = { Lead.new(self) }
   self.input = { top = Lead.new(self), bottom = Lead.new(self) }
 end
 
 NOTGate = class(CircuitItem)
 function NOTGate:init()
-  self.output = Lead.new(self)
-  self.input = Lead.new(self)
+  self.output = { Lead.new(self) }
+  self.input = { Lead.new(self) }
 end
 
 SPLITGate = class(CircuitItem)
 function SPLITGate:init()
   self.output = { top = Lead.new(self), bottom = Lead.new(self) }
-  self.input = Lead.new(self)
+  self.input = { Lead.new(self) }
 end
 
 FLIPFLOPGate = class(CircuitItem)
@@ -93,7 +121,7 @@ function Sensor:init(t, cb)
   self.signal_type = t
 end
 
-function Sensor:signal(object)
+function Sensor:trigger(object)
   if self.signal_type then
     if self.signal_type == object.__type then
       self:fire()

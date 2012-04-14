@@ -1,4 +1,5 @@
 require('class')
+require('drawable')
 
 directions = { up = {0, -1},
                down = {0, 1},
@@ -6,15 +7,14 @@ directions = { up = {0, -1},
                right = {1, 0},
              }
 
-Robot = class()
+Robot = class(Drawable)
 
 function Robot:init(arg)
-  self.x = arg.x
-  self.y = arg.y
-  self.speed        = arg.speed
-  self.image        = arg.image
-  self.image_x      = self.image:getWidth()
-  self.image_y      = self.image:getHeight()
+  Drawable.register(self)
+  self.x     = arg.x
+  self.y     = arg.y
+  self.speed = arg.speed
+  self.image = love.graphics.newImage('hamster.png')
 
   self.thrusters = { up    = Thruster:new(false),
                      down  = Thruster:new(false),
@@ -27,10 +27,6 @@ function Robot:init(arg)
                    left  = Sensor:new(),
                    right = Sensor:new(),
                    }
-end
-
-function Robot:image_center()
-  return self.image_x / 2, self.image_y / 2
 end
 
 function Robot:direction()
@@ -51,8 +47,4 @@ function Robot:move(dt)
   v = self:direction()
   self.x = self.x + (v[1] * self.speed * dt)
   self.y = self.y + (v[2] * self.speed * dt)
-end
-
-function Robot:draw()
-  love.graphics.draw(self.image, self.x, self.y, 0, 1, 1, self:image_center())
 end
