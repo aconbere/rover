@@ -13,10 +13,7 @@ function Draggable.mousepressed(x, y, button)
   if button == "l" then
     print(x,y)
     for i, d in ipairs(Draggable.__items__) do
-      print(d.name, d.x, d.y, d.x + d:width(), d.y + d:height())
-      if x > d.x and x < d.x + d:width() and
-         y > d.y and y < d.y + d:height()
-      then
+      if d:intersects(x,y) then
         Draggable.__active__ = d
         Draggable.__offset__.x = x - d.x
         Draggable.__offset__.y = y - d.y

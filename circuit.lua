@@ -31,7 +31,6 @@ require('class')
 require('drawable')
 require('draggable')
 
-
 Lead = class()
 function Lead:init(circuitItem)
   self.input = circuitItem
@@ -49,43 +48,50 @@ end
 CircuitItem = class(Drawable)
 CircuitItem.mixin(Draggable)
 
+function CircuitItem:intersects(x, y)
+  return x > self.x and x < self.x + self:width() - 5 and
+         y > self.y + 5 and y < self.y + self:height() - 5
+end
+
 ANDGate = class(CircuitItem)
+ANDGate.mixin({ name = "and",
+                image = love.graphics.newImage('and.png')
+              })
 function ANDGate:init(args)
   Drawable.register(self)
   Draggable.register(self)
 
-  self.name = "and"
-  
   self.x = args.x
   self.y = args.y
-  self.image = love.graphics.newImage('and.png')
-  self.dragging = false
 
   self.output = { Lead.new(self) }
   self.input = { top = Lead.new(self), bottom = Lead.new(self) }
 end
 
 XORGate = class(CircuitItem)
+XORGate.mixin({ name = "xor",
+                image = love.graphics.newImage('xor.png')
+              })
 function XORGate:init(args)
   Drawable.register(self)
   Draggable.register(self)
   self.x = args.x
   self.y = args.y
-  self.name = "xor"
-  self.image = love.graphics.newImage('xor.png')
   self.output = { Lead.new(self) }
   self.input = { top = Lead.new(self), bottom = Lead.new(self) }
 end
 
 ORGate = class(CircuitItem)
+ORGate.mixin({ name = "or",
+               image = love.graphics.newImage('or.png')
+              })
 function ORGate:init(args)
   Drawable.register(self)
   Draggable.register(self)
 
   self.x = args.x
   self.y = args.y
-  self.name = "or"
-  self.image = love.graphics.newImage('or.png')
+
   self.output = { Lead.new(self) }
   self.input = { top = Lead.new(self), bottom = Lead.new(self) }
 end

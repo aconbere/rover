@@ -16,7 +16,7 @@ end
 function Drawable:draw()
   image_x = self.image:getWidth()
   image_y = self.image:getHeight()
-  love.graphics.draw(self.image, self.x, self.y, 0, 1, 1, image_x, image_y)
+  love.graphics.draw(self.image, self.x, self.y, 0, 1, 1, 0, 0)
 end
 
 function Drawable:height()
