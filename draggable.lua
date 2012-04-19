@@ -11,7 +11,6 @@ end
 
 function Draggable.mousepressed(x, y, button)
   if button == "l" then
-    print(x,y)
     for i, d in ipairs(Draggable.__items__) do
       if d:intersects(x,y) then
         Draggable.__active__ = d
