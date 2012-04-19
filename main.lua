@@ -58,8 +58,7 @@ function love.mousereleased(x,y,button)
 end
 
 function love.draw()
-  --toolbar:draw()
-  Drawable.drawAll()
-  x = love.graphics.print('ROVER', world:center())
-  print(x:getWidth())
+  toolbar:draw()
+  --Drawable.drawAll()
+  love.graphics.print('ROVER', world:center())
 end
