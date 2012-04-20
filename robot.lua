@@ -1,5 +1,4 @@
 require('class')
-require('drawable')
 
 directions = { up = {0, -1},
                down = {0, 1},
@@ -7,10 +6,9 @@ directions = { up = {0, -1},
                right = {1, 0},
              }
 
-Robot = class(Drawable)
+Robot = class()
 
 function Robot:init(arg)
-  Drawable.register(self)
   self.x     = arg.x
   self.y     = arg.y
   self.speed = arg.speed

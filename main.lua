@@ -1,5 +1,4 @@
 require('world')
-require('drawable')
 require('draggable')
 require('robot')
 require('circuit')
@@ -13,10 +12,13 @@ function love.load()
   world = World.new(width, height)
   mouse = Listener.new()
 
-  toolbar = Toolbar.circuitDesign(world, mouse)
-  andGate = ANDGate.new(20, 20, mouse)
-  orGate  = ORGate.new(40, 40, mouse)
-  xorGate = XORGate.new(60, 60, mouse)
+  print(world, mouse)
+
+  toolbar = world:addObject(Toolbar.circuitDesign(world, mouse))
+
+  andGate = world:addObject(ANDGate.new(20, 20, world, mouse))
+  orGate  = world:addObject(ORGate.new(40, 40, world, mouse))
+  xorGate = world:addObject(XORGate.new(60, 60, world, mouse))
 end
 
 function love.keypressed(k)
@@ -58,7 +60,15 @@ function love.mousereleased(x,y,button)
 end
 
 function love.draw()
-  toolbar:draw()
-  --Drawable.drawAll()
+  world:draw()
   love.graphics.print('ROVER', world:center())
+  local image = love.graphics.newImage('or.png')
+  local x = 300
+  local y = 300
+  love.graphics.draw(image, x, y)
+  love.graphics.setColor(255,255,255)
+  love.graphics.circle("fill", x + 4, y + 4, 4)
+  love.graphics.circle("fill", x + 4, y + image:getHeight() - 4, 4)
+  love.graphics.circle("fill", x + image:getWidth() - 4, y + (image:getHeight()/2), 4)
+  love.graphics.setColor(0,0,0)
 end

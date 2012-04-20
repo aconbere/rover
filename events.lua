@@ -9,7 +9,9 @@ end
 function Listener:trigger(name, ...)
   if self.listeners[name] then
     for i, callback in ipairs(self.listeners[name]) do
-      callback(...)
+      if callback(...) == false then
+        break
+      end
     end
   end
 end
