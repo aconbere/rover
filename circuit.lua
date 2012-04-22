@@ -30,13 +30,69 @@
 require('class')
 require('math')
 
-Lead = class()
+Wire = class({ type = "wire" })
+function Wire:init(lead, world, mouse, active)
+  self.head = lead
+  self.tail = nil
+
+  self.world = world
+  self.mouse = mouse
+  self.active = active
+
+  self.offsetX = 0
+  self.offsetY = 0
+
+  mouse:register("update", function (mx, my)
+    if self.active then
+      self.offsetX = mx
+      self.offsetY = my
+    end
+  end)
+
+  mouse:register("mousereleased", function (mx, my, button)
+    if button == "l" then
+      if self.active then
+        self.active = false
+        self.offsetX = 0
+        self.offsetY = 0
+      end
+    end
+  end)
+end
+
+function Wire:draw()
+  love.graphics.setColor(255, 255, 255)
+  love.graphics.setLineStyle("smooth")
+  love.graphics.setLineWidth(2)
+
+  if self.tail then
+    love.graphics.line(self.head:getX(), self.head:getY(), self.tail:getX(), self.tail:getY())
+  elseif self.active then
+    love.graphics.line(self.head:getX(), self.head:getY(), self.offsetX, self.offsetY)
+  end
+
+  love.graphics.setColor(0,0,0)
+end
+
+Lead = class({ type = "lead" })
 
 function Lead:init(item, offsetX, offsetY, world, mouse)
   self.item = item
   self.offsetX = offsetX
   self.offsetY = offsetY
   self.hover = false
+  self.active = true
+  self.wire = nil
+
+  mouse:register("mousepressed", function (mx, my, button)
+    if button == "l" then
+      if self:intersects(mx, my) then
+        self.active = true
+        self.wire = world:addObject(Wire.new(self, world, mouse, true))
+        return false
+      end
+    end
+  end)
 
   mouse:register("update", function(mx,my)
     if self:intersects(mx, my) then
@@ -45,11 +101,36 @@ function Lead:init(item, offsetX, offsetY, world, mouse)
       self.hover = false
     end
   end)
+
+  mouse:register("mousereleased", function (mx, my, button)
+    connected = false
+    if button == "l" and self.active and self.wire then
+      intersectors = world:intersects(mx, my)
+      if intersectors then
+        for i, inter in pairs(intersectors) do
+          if inter.type == "lead" then
+            connected = true
+            self.wire.tail = inter
+            break
+          end
+        end
+      end
+      if not connected then
+        world:removeObject(self.wire.id)
+        self.wire = nil
+      end 
+      self.active = false
+    end
+  end)
 end
 
 function Lead:intersects(mx,my)
   return mx < self:getX() + 4 and mx > self:getX() - 4 and
          my < self:getY() + 4 and my > self:getY() - 4
+end
+
+function Lead:connect(wire)
+  wire.tail = self
 end
 
 function Lead:getX()
@@ -73,7 +154,6 @@ end
 CircuitItem = class({ x = nil, y = nil, image = nil })
 
 function CircuitItem:init(x, y, world, mouse)
-  print(x,y,world,mouse, self.name)
   self:setX(x)
   self:setY(y)
 
@@ -93,13 +173,15 @@ end
 
 function CircuitItem:draw()
   love.graphics.draw(self.image, self:getX(), self:getY(), 0, 1, 1, 0, 0)
-  for i, lead in pairs(self.leads) do
-    lead:draw()
-  end
 end
 
 function CircuitItem:intersects(x, y)
   -- should be the equation for this triangle
+  for i, lead in pairs(self.leads) do
+    if lead:intersects(x,y) then
+      return false
+    end
+  end
   return x > self:getX() and x < self:getX() + self:width() and
          y > self:getY() and y < self:getY() + self:height()
 end
@@ -133,35 +215,35 @@ function CircuitItem:getY()
 end
 
 ANDGate = class(CircuitItem)
-ANDGate.mixin({ name      = "and"
+ANDGate.mixin({ type      = "and"
               , image     = love.graphics.newImage('and.png')
               , direction = { 1, 0 }
               })
 function ANDGate:init(x, y, world, mouse)
   CircuitItem.init(self, x, y, world, mouse)
 
-  self.leads = { output      = Lead.new(self, self:width() - 4, self:height() / 2, world, mouse) 
-               , inputTop    = Lead.new(self, 4, 4, world, mouse)
-               , inputBottom = Lead.new(self, 4, self:height() - 4, world, mouse)
+  self.leads = { output      = world:addObject(Lead.new(self, self:width() - 4, self:height() / 2, world, mouse))
+               , inputTop    = world:addObject(Lead.new(self, 4, 4, world, mouse))
+               , inputBottom = world:addObject(Lead.new(self, 4, self:height() - 4, world, mouse))
                }
 end
 
 XORGate = class(CircuitItem)
-XORGate.mixin({ name      = "xor"
+XORGate.mixin({ type      = "xor"
               , image     = love.graphics.newImage('xor.png')
               , direction = { 1, 0 }
               })
 function XORGate:init(x,y,world,mouse)
   CircuitItem.init(self, x, y, world, mouse)
 
-  self.leads = { output      = Lead.new(self, self:width() - 4, self:height() / 2, world, mouse) 
-               , inputTop    = Lead.new(self, 4, 4, world, mouse)
-               , inputBottom = Lead.new(self, 4, self:height() - 4, world, mouse)
+  self.leads = { output      = world:addObject(Lead.new(self, self:width() - 4, self:height() / 2, world, mouse))
+               , inputTop    = world:addObject(Lead.new(self, 4, 4, world, mouse))
+               , inputBottom = world:addObject(Lead.new(self, 4, self:height() - 4, world, mouse))
                }
 end
 
 ORGate = class(CircuitItem)
-ORGate.mixin({ name      = "or"
+ORGate.mixin({ type      = "or"
              , image     = love.graphics.newImage('or.png')
              , direction = { 1, 0 }
              })
@@ -169,9 +251,9 @@ ORGate.mixin({ name      = "or"
 function ORGate:init(x, y, world, mouse)
   CircuitItem.init(self, x, y, world, mouse)
 
-  self.leads = { output      = Lead.new(self, self:width() - 4, self:height() / 2, world, mouse) 
-               , inputTop    = Lead.new(self, 4, 4, world, mouse)
-               , inputBottom = Lead.new(self, 4, self:height() - 4, world, mouse)
+  self.leads = { output      = world:addObject(Lead.new(self, self:width() - 4, self:height() / 2, world, mouse))
+               , inputTop    = world:addObject(Lead.new(self, 4, 4, world, mouse))
+               , inputBottom = world:addObject(Lead.new(self, 4, self:height() - 4, world, mouse))
                }
 end
 
