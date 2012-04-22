@@ -214,6 +214,13 @@ function CircuitItem:getY()
   return self.__y
 end
 
+function CircuitItem:attachToWorld()
+  self.world:addObject(self)
+  for i, l in pairs(self.leads) do
+    self.world:addObject(l)
+  end
+end
+
 ANDGate = class(CircuitItem)
 ANDGate.mixin({ type      = "and"
               , image     = love.graphics.newImage('and.png')
@@ -222,10 +229,11 @@ ANDGate.mixin({ type      = "and"
 function ANDGate:init(x, y, world, mouse)
   CircuitItem.init(self, x, y, world, mouse)
 
-  self.leads = { output      = world:addObject(Lead.new(self, self:width() - 4, self:height() / 2, world, mouse))
-               , inputTop    = world:addObject(Lead.new(self, 4, 4, world, mouse))
-               , inputBottom = world:addObject(Lead.new(self, 4, self:height() - 4, world, mouse))
+  self.leads = { output      = Lead.new(self, self:width() - 4, self:height() / 2, world, mouse)
+               , inputTop    = Lead.new(self, 4, 4, world, mouse)
+               , inputBottom = Lead.new(self, 4, self:height() - 4, world, mouse)
                }
+  self:attachToWorld()
 end
 
 XORGate = class(CircuitItem)
@@ -236,10 +244,11 @@ XORGate.mixin({ type      = "xor"
 function XORGate:init(x,y,world,mouse)
   CircuitItem.init(self, x, y, world, mouse)
 
-  self.leads = { output      = world:addObject(Lead.new(self, self:width() - 4, self:height() / 2, world, mouse))
-               , inputTop    = world:addObject(Lead.new(self, 4, 4, world, mouse))
-               , inputBottom = world:addObject(Lead.new(self, 4, self:height() - 4, world, mouse))
+  self.leads = { output      = Lead.new(self, self:width() - 4, self:height() / 2, world, mouse)
+               , inputTop    = Lead.new(self, 4, 4, world, mouse)
+               , inputBottom = Lead.new(self, 4, self:height() - 4, world, mouse)
                }
+  self:attachToWorld()
 end
 
 ORGate = class(CircuitItem)
@@ -251,10 +260,11 @@ ORGate.mixin({ type      = "or"
 function ORGate:init(x, y, world, mouse)
   CircuitItem.init(self, x, y, world, mouse)
 
-  self.leads = { output      = world:addObject(Lead.new(self, self:width() - 4, self:height() / 2, world, mouse))
-               , inputTop    = world:addObject(Lead.new(self, 4, 4, world, mouse))
-               , inputBottom = world:addObject(Lead.new(self, 4, self:height() - 4, world, mouse))
+  self.leads = { output      = Lead.new(self, self:width() - 4, self:height() / 2, world, mouse)
+               , inputTop    = Lead.new(self, 4, 4, world, mouse)
+               , inputBottom = Lead.new(self, 4, self:height() - 4, world, mouse)
                }
+  self:attachToWorld()
 end
 
 NOTGate = class(CircuitItem)

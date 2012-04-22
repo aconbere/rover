@@ -18,6 +18,21 @@ function World:addObject(o)
   return o
 end
 
+function World:addObjectAbove(o1, o2)
+  -- puts o2 above o1
+  
+  newTable = {}
+  for i = 1, o1.id - 1 do
+    table.insert(newTable, self.objects[i])
+  end
+  table.insert(newTable, o2)
+
+  for i = o1.id, #self.objects do
+    table.insert(newTable, self.objects[i])
+  end
+  self.objects = newTable
+end
+
 function World:center()
   return self.width / 2, self.height / 2
 end

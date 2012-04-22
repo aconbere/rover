@@ -16,9 +16,9 @@ function love.load()
 
   toolbar = world:addObject(Toolbar.circuitDesign(world, mouse))
 
-  andGate = world:addObject(ANDGate.new(20, 20, world, mouse))
-  orGate  = world:addObject(ORGate.new(40, 40, world, mouse))
-  xorGate = world:addObject(XORGate.new(60, 60, world, mouse))
+  andGate = ANDGate.new(20, 20, world, mouse)
+  orGate  = ORGate.new(40, 40, world, mouse)
+  xorGate = XORGate.new(60, 60, world, mouse)
 end
 
 function love.keypressed(k)
