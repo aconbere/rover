@@ -11,8 +11,9 @@ function love.load()
 
   world = World.new(width, height)
   mouse = Listener.new()
-
-  print(world, mouse)
+  sensors = {
+    world:addObject(Sensor.new(80,80, world, mouse))
+  }
 
   toolbar = world:addObject(Toolbar.circuitDesign(world, mouse))
 
@@ -29,6 +30,7 @@ end
 
 function love.update(dt)
   mouse:trigger("update", love.mouse.getX(), love.mouse.getY())
+  simulate()
   --Draggable.update(love.mouse.getX(), love.mouse.getY())
 
   --robot:move(dt)
@@ -57,6 +59,13 @@ end
 
 function love.mousereleased(x,y,button)
   mouse:trigger("mousereleased", x,y, button)
+end
+
+function simulate()
+  -- fake sensor fires in our simulation
+  for i, sensor in ipairs(sensors) do
+    sensor:fire()
+  end
 end
 
 function love.draw()

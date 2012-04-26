@@ -1,34 +1,44 @@
+require('class')
+require('math')
+
 --[[
---            __
--- signal___ |  \_
---           |__/
 --
+--  Gates have Leads which provide the connection points between Gates and Wires
+--  Wires are the edges in the circuit graph.
 --
--- A Circuit is a graph of CircuitItems
---
--- Signals propegate through the graph in a
--- breadth first search.
---
--- CircuitItems have inputs and outputs
---
---
--- sensorA = Sensor()
--- sensorB = Sensor()
---
--- andGate = ANDGate()
--- orGate = ANDGate()
---
--- sensorA.output.connect(orGate.input.top)
--- sensorB.output.connect(orGate.input.bottom)
--- orGate.output.connect(andGate.input.top)
---
--- sensorA.fire()
--- sensorB.fire()
 --
 --]]
 
-require('class')
-require('math')
+
+Sensor = class()
+function Sensor:init(x, y, world, mouse)
+  self.x = x
+  self.y = y
+  self.world = world
+  self.mouse = mouse
+
+  self.lead = world:addObject(Lead.new(self, 10, 10, world, mouse))
+end
+
+function Sensor:fire()
+  print("sensor fire")
+  self.lead:fire(self.id)
+end
+
+function Sensor:getX()
+  return self.x
+end
+
+function Sensor:getY()
+  return self.y
+end
+
+function Sensor:draw()
+  love.graphics.setColor(0, 0, 255)
+  love.graphics.rectangle("fill", self:getX(), self:getY(), 20, 20)
+  love.graphics.setColor(0, 0, 0)
+end
+
 
 Wire = class({ type = "wire" })
 function Wire:init(lead, world, mouse, active)
@@ -74,7 +84,27 @@ function Wire:draw()
   love.graphics.setColor(0,0,0)
 end
 
+function Wire:fire(id)
+  print("Wire fire")
+  assert(id)
+  if self.head and self.head.id ~= id then
+    self.head:fire(self.id)
+  elseif self.tail and self.tail.id ~= id then
+    self.tail:fire(self.id)
+  end
+end
+
 Lead = class({ type = "lead" })
+
+function Lead:fire(id)
+  assert(id)
+  print("Lead fire", id)
+  if self.wire and self.wire.id ~= id then
+    self.wire:fire(self.id)
+  elseif self.item and self.item.id ~= id then
+    self.item:fire(self.id)
+  end
+end
 
 function Lead:init(item, offsetX, offsetY, world, mouse)
   self.item = item
@@ -105,6 +135,8 @@ function Lead:init(item, offsetX, offsetY, world, mouse)
   mouse:register("mousereleased", function (mx, my, button)
     connected = false
     if button == "l" and self.active and self.wire then
+      -- the world keeps a list of intersectable objects
+      -- check it to see if we're dropping on a lead
       intersectors = world:intersects(mx, my)
       if intersectors then
         for i, inter in pairs(intersectors) do
@@ -151,9 +183,9 @@ function Lead:draw()
   love.graphics.setColor(0,0,0)
 end
 
-CircuitItem = class({ x = nil, y = nil, image = nil })
+Gate = class({ x = nil, y = nil, image = nil })
 
-function CircuitItem:init(x, y, world, mouse)
+function Gate:init(x, y, world, mouse)
   self:setX(x)
   self:setY(y)
 
@@ -163,19 +195,19 @@ function CircuitItem:init(x, y, world, mouse)
   Draggable(self, mouse)
 end
 
-function CircuitItem:height()
+function Gate:height()
   return self.image:getHeight()
 end
 
-function CircuitItem:width()
+function Gate:width()
   return self.image:getWidth()
 end
 
-function CircuitItem:draw()
+function Gate:draw()
   love.graphics.draw(self.image, self:getX(), self:getY(), 0, 1, 1, 0, 0)
 end
 
-function CircuitItem:intersects(x, y)
+function Gate:intersects(x, y)
   -- should be the equation for this triangle
   for i, lead in pairs(self.leads) do
     if lead:intersects(x,y) then
@@ -186,7 +218,7 @@ function CircuitItem:intersects(x, y)
          y > self:getY() and y < self:getY() + self:height()
 end
 
-function CircuitItem:setX(x)
+function Gate:setX(x)
   if x < 80 then
     self.__x = 80 
   elseif x > world.width then
@@ -196,7 +228,7 @@ function CircuitItem:setX(x)
   end
 end
 
-function CircuitItem:setY(y)
+function Gate:setY(y)
   if y < 0 then
     self.__y = 0
   elseif y > world.height then
@@ -206,28 +238,28 @@ function CircuitItem:setY(y)
   end
 end
 
-function CircuitItem:getX()
+function Gate:getX()
   return math.max(self.__x, 80)
 end
 
-function CircuitItem:getY()
+function Gate:getY()
   return self.__y
 end
 
-function CircuitItem:attachToWorld()
+function Gate:attachToWorld()
   self.world:addObject(self)
   for i, l in pairs(self.leads) do
     self.world:addObject(l)
   end
 end
 
-ANDGate = class(CircuitItem)
+ANDGate = class(Gate)
 ANDGate.mixin({ type      = "and"
               , image     = love.graphics.newImage('and.png')
               , direction = { 1, 0 }
               })
 function ANDGate:init(x, y, world, mouse)
-  CircuitItem.init(self, x, y, world, mouse)
+  Gate.init(self, x, y, world, mouse)
 
   self.leads = { output      = Lead.new(self, self:width() - 4, self:height() / 2, world, mouse)
                , inputTop    = Lead.new(self, 4, 4, world, mouse)
@@ -236,13 +268,13 @@ function ANDGate:init(x, y, world, mouse)
   self:attachToWorld()
 end
 
-XORGate = class(CircuitItem)
+XORGate = class(Gate)
 XORGate.mixin({ type      = "xor"
               , image     = love.graphics.newImage('xor.png')
               , direction = { 1, 0 }
               })
 function XORGate:init(x,y,world,mouse)
-  CircuitItem.init(self, x, y, world, mouse)
+  Gate.init(self, x, y, world, mouse)
 
   self.leads = { output      = Lead.new(self, self:width() - 4, self:height() / 2, world, mouse)
                , inputTop    = Lead.new(self, 4, 4, world, mouse)
@@ -251,14 +283,14 @@ function XORGate:init(x,y,world,mouse)
   self:attachToWorld()
 end
 
-ORGate = class(CircuitItem)
+ORGate = class(Gate)
 ORGate.mixin({ type      = "or"
              , image     = love.graphics.newImage('or.png')
              , direction = { 1, 0 }
              })
 
 function ORGate:init(x, y, world, mouse)
-  CircuitItem.init(self, x, y, world, mouse)
+  Gate.init(self, x, y, world, mouse)
 
   self.leads = { output      = Lead.new(self, self:width() - 4, self:height() / 2, world, mouse)
                , inputTop    = Lead.new(self, 4, 4, world, mouse)
@@ -267,6 +299,6 @@ function ORGate:init(x, y, world, mouse)
   self:attachToWorld()
 end
 
-NOTGate = class(CircuitItem)
-SPLITGate = class(CircuitItem)
-FLIPFLOPGate = class(CircuitItem)
+NOTGate = class(Gate)
+SPLITGate = class(Gate)
+FLIPFLOPGate = class(Gate)
