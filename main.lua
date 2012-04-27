@@ -13,15 +13,16 @@ function love.load()
   mouse = Listener.new()
 
   sensors = {
+    Sensor.new(80,180, world, mouse),
     Sensor.new(80,80, world, mouse)
   }
 
   toolbar = world:addObject(Toolbar.circuitDesign(world, mouse))
 
   gates = {
-    ANDGate.new(20, 20, world, mouse),
-    ORGate.new(40, 40, world, mouse),
-    XORGate.new(60, 60, world, mouse),
+    ANDGate.new(120, 20, world, mouse),
+    ORGate.new(140, 60, world, mouse),
+    XORGate.new(160, 100, world, mouse),
   }
 end
 
@@ -84,13 +85,5 @@ end
 function love.draw()
   world:draw()
   love.graphics.print('ROVER', world:center())
-  local image = love.graphics.newImage('or.png')
-  local x = 300
-  local y = 300
-  love.graphics.draw(image, x, y)
-  love.graphics.setColor(255,255,255)
-  love.graphics.circle("fill", x + 4, y + 4, 4)
-  love.graphics.circle("fill", x + 4, y + image:getHeight() - 4, 4)
-  love.graphics.circle("fill", x + image:getWidth() - 4, y + (image:getHeight()/2), 4)
   love.graphics.setColor(0,0,0)
 end

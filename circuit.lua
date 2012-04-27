@@ -24,12 +24,14 @@ end
 
 function Sensor:update(dt)
   self.timeSince = self.timeSince + dt
-  if self.timeSince > 5 then
+  self.lead:update(dt)
+
+  if self.timeSince > 6 then
     print("fire")
     self.lead:fire(self.id)
     self.fired = true
     self.timeSince = 0
-  elseif self.timeSince > 1 then
+  elseif self.timeSince > 2 then
     self.fired = nil
   end
 end
@@ -79,6 +81,10 @@ function Wire:init(lead, world, mouse, active)
   end)
 end
 
+function Wire:update(dt)
+  self.fired = nil
+end
+
 function Wire:draw()
   love.graphics.setColor(255, 255, 255)
   love.graphics.setLineStyle("smooth")
@@ -101,12 +107,11 @@ end
 
 function Wire:fire(id)
   assert(id)
+  self.fired = true
   if self.head and self.head.id ~= id then
     self.head:fire(self.id)
-    self.fired = love.timer.getMicroTime()
   elseif self.tail and self.tail.id ~= id then
     self.tail:fire(self.id)
-    self.fired = love.timer.getMicroTime()
   end
 end
 
@@ -114,7 +119,7 @@ Lead = class({ type = "lead" })
 
 function Lead:fire(id)
   assert(id)
-  self.fired = love.timer.getMicroTime()
+  self.fired = true
   if self.wire and self.wire.id ~= id then
     self.wire:fire(self.id)
   end
@@ -175,14 +180,15 @@ function Lead:init(item, offsetX, offsetY, world, mouse)
 end
 
 function Lead:update(dt)
+
   self.timeSince = self.timeSince + dt
-  if self.timeSince > 0.5 then
+  if self.fired and self.timeSince > 2 then
     self.fired = nil
     self.timeSince = 0
   end
 
   if self.wire then
-    self.wire.fired = nil
+    self.wire:update(dt)
   end
 end
 
@@ -206,12 +212,10 @@ end
 function Lead:draw()
   if self.hover then
     love.graphics.setColor(255,0,0)
+  elseif self.fired then
+    love.graphics.setColor(255,0,0)
   else
     love.graphics.setColor(255,255,255)
-  end
-
-  if self.fired then
-    love.graphics.setColor(255,0,0)
   end
 
   love.graphics.circle("fill", self:getX(), self:getY(), 4)
@@ -234,7 +238,7 @@ end
 function Gate:update(dt)
   self.timeSince = self.timeSince + dt
 
-  if self.timeSince > 1 then
+  if self.timeSince > 2 then
     self.fired = nil
     self.timeSince = 0
   end
