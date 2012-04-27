@@ -6,7 +6,6 @@ require('math')
 --  Gates have Leads which provide the connection points between Gates and Wires
 --  Wires are the edges in the circuit graph.
 --
---
 --]]
 
 
@@ -16,13 +15,23 @@ function Sensor:init(x, y, world, mouse)
   self.y = y
   self.world = world
   self.mouse = mouse
+  self.fired = false
+  self.timeSince = 0
 
+  self.world:addObject(self)
   self.lead = world:addObject(Lead.new(self, 10, 10, world, mouse))
 end
 
-function Sensor:fire()
-  print("sensor fire")
-  self.lead:fire(self.id)
+function Sensor:update(dt)
+  self.timeSince = self.timeSince + dt
+  if self.timeSince > 5 then
+    print("fire")
+    self.lead:fire(self.id)
+    self.fired = true
+    self.timeSince = 0
+  elseif self.timeSince > 1 then
+    self.fired = nil
+  end
 end
 
 function Sensor:getX()
@@ -75,6 +84,12 @@ function Wire:draw()
   love.graphics.setLineStyle("smooth")
   love.graphics.setLineWidth(2)
 
+  if self.fired then
+    love.graphics.setColor(255,0,0)
+  else
+    love.graphics.setColor(255, 255, 255)
+  end
+
   if self.tail then
     love.graphics.line(self.head:getX(), self.head:getY(), self.tail:getX(), self.tail:getY())
   elseif self.active then
@@ -85,12 +100,13 @@ function Wire:draw()
 end
 
 function Wire:fire(id)
-  print("Wire fire")
   assert(id)
   if self.head and self.head.id ~= id then
     self.head:fire(self.id)
+    self.fired = love.timer.getMicroTime()
   elseif self.tail and self.tail.id ~= id then
     self.tail:fire(self.id)
+    self.fired = love.timer.getMicroTime()
   end
 end
 
@@ -98,11 +114,9 @@ Lead = class({ type = "lead" })
 
 function Lead:fire(id)
   assert(id)
-  print("Lead fire", id)
+  self.fired = love.timer.getMicroTime()
   if self.wire and self.wire.id ~= id then
     self.wire:fire(self.id)
-  elseif self.item and self.item.id ~= id then
-    self.item:fire(self.id)
   end
 end
 
@@ -111,15 +125,19 @@ function Lead:init(item, offsetX, offsetY, world, mouse)
   self.offsetX = offsetX
   self.offsetY = offsetY
   self.hover = false
-  self.active = true
+  self.active = false
+  self.fired = nil
+  self.timeSince = 0
   self.wire = nil
 
   mouse:register("mousepressed", function (mx, my, button)
-    if button == "l" then
-      if self:intersects(mx, my) then
-        self.active = true
-        self.wire = world:addObject(Wire.new(self, world, mouse, true))
-        return false
+    if not self.wire then
+      if button == "l" then
+        if self:intersects(mx, my) then
+          self.active = true
+          self.wire = world:addObject(Wire.new(self, world, mouse, true))
+          return false
+        end
       end
     end
   end)
@@ -156,6 +174,18 @@ function Lead:init(item, offsetX, offsetY, world, mouse)
   end)
 end
 
+function Lead:update(dt)
+  self.timeSince = self.timeSince + dt
+  if self.timeSince > 0.5 then
+    self.fired = nil
+    self.timeSince = 0
+  end
+
+  if self.wire then
+    self.wire.fired = nil
+  end
+end
+
 function Lead:intersects(mx,my)
   return mx < self:getX() + 4 and mx > self:getX() - 4 and
          my < self:getY() + 4 and my > self:getY() - 4
@@ -179,6 +209,11 @@ function Lead:draw()
   else
     love.graphics.setColor(255,255,255)
   end
+
+  if self.fired then
+    love.graphics.setColor(255,0,0)
+  end
+
   love.graphics.circle("fill", self:getX(), self:getY(), 4)
   love.graphics.setColor(0,0,0)
 end
@@ -191,8 +226,27 @@ function Gate:init(x, y, world, mouse)
 
   self.world = world
   self.mouse = mouse
+  self.timeSince = 0
 
   Draggable(self, mouse)
+end
+
+function Gate:update(dt)
+  self.timeSince = self.timeSince + dt
+
+  if self.timeSince > 1 then
+    self.fired = nil
+    self.timeSince = 0
+  end
+
+  for _, lead in pairs(self.leads) do
+    lead:update(dt)
+  end
+end
+
+function Gate:fire(dt)
+  self.timeSince = 0
+  self.leads.output:fire(dt)
 end
 
 function Gate:height()
@@ -268,6 +322,12 @@ function ANDGate:init(x, y, world, mouse)
   self:attachToWorld()
 end
 
+function ANDGate:state()
+  if self.leads.inputTop.fired and self.leads.inputBottom.fired then
+    return "fired"
+  end
+end
+
 XORGate = class(Gate)
 XORGate.mixin({ type      = "xor"
               , image     = love.graphics.newImage('xor.png')
@@ -280,7 +340,16 @@ function XORGate:init(x,y,world,mouse)
                , inputTop    = Lead.new(self, 4, 4, world, mouse)
                , inputBottom = Lead.new(self, 4, self:height() - 4, world, mouse)
                }
+
   self:attachToWorld()
+end
+
+function XORGate:state()
+  if self.leads.inputTop.fired and not self.leads.inputBottom.fired then
+    return "fired"
+  elseif self.leads.inputBottom.fired and not self.leads.inputTop.fired then
+    return "fired"
+  end
 end
 
 ORGate = class(Gate)
@@ -297,6 +366,12 @@ function ORGate:init(x, y, world, mouse)
                , inputBottom = Lead.new(self, 4, self:height() - 4, world, mouse)
                }
   self:attachToWorld()
+end
+
+function ORGate:state()
+  if self.leads.inputTop.fired or self.leads.inputBottom.fired then
+    return "fired"
+  end
 end
 
 NOTGate = class(Gate)

@@ -11,15 +11,18 @@ function love.load()
 
   world = World.new(width, height)
   mouse = Listener.new()
+
   sensors = {
-    world:addObject(Sensor.new(80,80, world, mouse))
+    Sensor.new(80,80, world, mouse)
   }
 
   toolbar = world:addObject(Toolbar.circuitDesign(world, mouse))
 
-  andGate = ANDGate.new(20, 20, world, mouse)
-  orGate  = ORGate.new(40, 40, world, mouse)
-  xorGate = XORGate.new(60, 60, world, mouse)
+  gates = {
+    ANDGate.new(20, 20, world, mouse),
+    ORGate.new(40, 40, world, mouse),
+    XORGate.new(60, 60, world, mouse),
+  }
 end
 
 function love.keypressed(k)
@@ -30,7 +33,7 @@ end
 
 function love.update(dt)
   mouse:trigger("update", love.mouse.getX(), love.mouse.getY())
-  simulate()
+  simulate(dt)
   --Draggable.update(love.mouse.getX(), love.mouse.getY())
 
   --robot:move(dt)
@@ -61,10 +64,20 @@ function love.mousereleased(x,y,button)
   mouse:trigger("mousereleased", x,y, button)
 end
 
-function simulate()
+function simulate(dt)
   -- fake sensor fires in our simulation
+  for i, gate in ipairs(gates) do
+    gate:update(dt)
+  end
+
   for i, sensor in ipairs(sensors) do
-    sensor:fire()
+    sensor:update(dt)
+  end
+
+  for i, gate in ipairs(gates) do
+    if gate:state() == "fired" then
+      gate:fire(dt)
+    end
   end
 end
 
