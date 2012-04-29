@@ -26,14 +26,14 @@
      inkscape:pageshadow="2"
      inkscape:zoom="0.98994949"
      inkscape:cx="259.08034"
-     inkscape:cy="651.20864"
+     inkscape:cy="489.58423"
      inkscape:document-units="px"
      inkscape:current-layer="g3037"
      showgrid="false"
      inkscape:window-width="1278"
-     inkscape:window-height="784"
+     inkscape:window-height="798"
      inkscape:window-x="0"
-     inkscape:window-y="14"
+     inkscape:window-y="0"
      inkscape:window-maximized="0"
      showguides="true"
      inkscape:guide-bbox="true">
@@ -49,7 +49,7 @@
         <dc:format>image/svg+xml</dc:format>
         <dc:type
            rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
-        <dc:title />
+        <dc:title></dc:title>
       </cc:Work>
     </rdf:RDF>
   </metadata>
@@ -406,6 +406,77 @@
                width="102.14286"
                id="rect3070-26" /></flowRegion><flowPara
              id="flowPara3072-3">And</flowPara></flowRoot>      </g>
-    </g>
+      <path
+         transform="matrix(-1.0199363,0,0,-1.0143878,325.02719,1394.3362)"
+         inkscape:transform-center-x="18.271341"
+         d="m 157.37106,620.93359 -53.74258,31.0283 -53.742581,31.02829 0,-62.05659 0,-62.05658 53.742581,31.02829 z"
+         inkscape:randomized="0"
+         inkscape:rounded="0"
+         inkscape:flatsided="false"
+         sodipodi:arg2="1.0471976"
+         sodipodi:arg1="0"
+         sodipodi:r2="35.828388"
+         sodipodi:r1="71.656776"
+         sodipodi:cy="620.93359"
+         sodipodi:cx="85.714287"
+         sodipodi:sides="3"
+         id="path2987-7-6"
+         style="fill:#c8c4b7;fill-opacity:1;stroke:none"
+         sodipodi:type="star"
+         inkscape:transform-center-y="-1.2505402e-05"
+         inkscape:export-filename="/home/aconbere/Projects/love/rover/split.png"
+         inkscape:export-xdpi="28.594374"
+         inkscape:export-ydpi="28.594374" />
+      <flowRoot
+         xml:space="preserve"
+         id="flowRoot3066-8-2"
+         style="font-size:32px;font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;text-align:start;line-height:125%;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:start;fill:#000080;fill-opacity:1;stroke:none;font-family:DejaVu Sans;-inkscape-font-specification:DejaVu Sans Bold"
+         transform="translate(17.360781,477.70353)"
+         inkscape:export-filename="/home/aconbere/Projects/love/rover/xor.png"
+         inkscape:export-xdpi="29.500227"
+         inkscape:export-ydpi="29.500227"><flowRegion
+           id="flowRegion3068-94-7"><rect
+             id="rect3070-6-0"
+             width="102.14286"
+             height="47.5"
+             x="159.64285"
+             y="264.86218"
+             style="font-size:32px;font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;text-align:start;line-height:125%;writing-mode:lr-tb;text-anchor:start;fill:#000080;font-family:DejaVu Sans;-inkscape-font-specification:DejaVu Sans Bold" /></flowRegion><flowPara
+           id="flowPara3136-1" /></flowRoot>      <path
+         transform="matrix(-1.0199363,0,0,-1.0143878,500.18009,1394.3362)"
+         inkscape:transform-center-x="18.271341"
+         d="m 157.37106,620.93359 -53.74258,31.0283 -53.742581,31.02829 0,-62.05659 0,-62.05658 53.742581,31.02829 z"
+         inkscape:randomized="0"
+         inkscape:rounded="0"
+         inkscape:flatsided="false"
+         sodipodi:arg2="1.0471976"
+         sodipodi:arg1="0"
+         sodipodi:r2="35.828388"
+         sodipodi:r1="71.656776"
+         sodipodi:cy="620.93359"
+         sodipodi:cx="85.714287"
+         sodipodi:sides="3"
+         id="path2987-7-0-6"
+         style="fill:#ffcc00;fill-opacity:1;stroke:none"
+         sodipodi:type="star"
+         inkscape:export-filename="/home/aconbere/Projects/love/rover/xor.png"
+         inkscape:export-xdpi="29.500227"
+         inkscape:export-ydpi="29.500227" />
+      <flowRoot
+         xml:space="preserve"
+         id="flowRoot3066-8-3-1"
+         style="font-size:32px;font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;text-align:start;line-height:125%;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:start;fill:#ff6600;fill-opacity:1;stroke:none;font-family:DejaVu Sans;-inkscape-font-specification:DejaVu Sans Bold"
+         transform="translate(192.51368,477.70353)"
+         inkscape:export-filename="/home/aconbere/Projects/love/rover/xor.png"
+         inkscape:export-xdpi="29.500227"
+         inkscape:export-ydpi="29.500227"><flowRegion
+           id="flowRegion3068-94-0-3"><rect
+             id="rect3070-6-2-2"
+             width="102.14286"
+             height="47.5"
+             x="159.64285"
+             y="264.86218"
+             style="font-size:32px;font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;text-align:start;line-height:125%;writing-mode:lr-tb;text-anchor:start;fill:#ff6600;font-family:DejaVu Sans;-inkscape-font-specification:DejaVu Sans Bold" /></flowRegion><flowPara
+           id="flowPara3136-8-0" /></flowRoot>    </g>
   </g>
 </svg>

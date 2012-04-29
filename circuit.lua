@@ -8,6 +8,7 @@ require('math')
 --
 --]]
 
+SIGNAL_LIFE = 1
 
 Sensor = class()
 function Sensor:init(x, y, world, mouse)
@@ -27,11 +28,10 @@ function Sensor:update(dt)
   self.lead:update(dt)
 
   if self.timeSince > 6 then
-    print("fire")
     self.lead:fire(self.id)
     self.fired = true
     self.timeSince = 0
-  elseif self.timeSince > 2 then
+  elseif self.timeSince > SIGNAL_LIFE then
     self.fired = nil
   end
 end
@@ -59,6 +59,7 @@ function Wire:init(lead, world, mouse, active)
   self.world = world
   self.mouse = mouse
   self.active = active
+  self.timeSince = 0
 
   self.offsetX = 0
   self.offsetY = 0
@@ -81,10 +82,6 @@ function Wire:init(lead, world, mouse, active)
   end)
 end
 
-function Wire:update(dt)
-  self.fired = nil
-end
-
 function Wire:draw()
   love.graphics.setColor(255, 255, 255)
   love.graphics.setLineStyle("smooth")
@@ -105,9 +102,17 @@ function Wire:draw()
   love.graphics.setColor(0,0,0)
 end
 
+function Wire:update(dt)
+  self.timeSince = self.timeSince + dt
+  if self.fired and self.timeSince > SIGNAL_LIFE then
+    self.fired = nil
+  end
+end
+
 function Wire:fire(id)
   assert(id)
   self.fired = true
+  self.timeSince = 0
   if self.head and self.head.id ~= id then
     self.head:fire(self.id)
   elseif self.tail and self.tail.id ~= id then
@@ -120,6 +125,7 @@ Lead = class({ type = "lead" })
 function Lead:fire(id)
   assert(id)
   self.fired = true
+  self.timeSince = 0
   if self.wire and self.wire.id ~= id then
     self.wire:fire(self.id)
   end
@@ -166,6 +172,7 @@ function Lead:init(item, offsetX, offsetY, world, mouse)
           if inter.type == "lead" then
             connected = true
             self.wire.tail = inter
+            inter.wire = self.wire
             break
           end
         end
@@ -180,11 +187,9 @@ function Lead:init(item, offsetX, offsetY, world, mouse)
 end
 
 function Lead:update(dt)
-
   self.timeSince = self.timeSince + dt
-  if self.fired and self.timeSince > 2 then
+  if self.fired and self.timeSince > SIGNAL_LIFE then
     self.fired = nil
-    self.timeSince = 0
   end
 
   if self.wire then
@@ -238,7 +243,7 @@ end
 function Gate:update(dt)
   self.timeSince = self.timeSince + dt
 
-  if self.timeSince > 2 then
+  if self.timeSince > SIGNAL_LIFE then
     self.fired = nil
     self.timeSince = 0
   end
@@ -379,5 +384,36 @@ function ORGate:state()
 end
 
 NOTGate = class(Gate)
+
 SPLITGate = class(Gate)
+SPLITGate.mixin({ type      = "split"
+                , image     = love.graphics.newImage("split.png")
+                , direction = { 1, 0 }
+                })
+function SPLITGate:init(x, y, world, mouse)
+  Gate.init(self, x, y, world, mouse)
+
+  self.leads = { input        = Lead.new(self, 4, self:height() / 2, world, mouse)
+               , outputTop    = Lead.new(self, self:width() - 4, 4, world, mouse)
+               , outputBottom = Lead.new(self, self:width() - 4, self:height() - 4, world, mouse)
+               }
+
+  self:attachToWorld()
+end
+
+function SPLITGate:fire(id)
+  assert(id)
+  self.fired = true
+  self.timeSince = 0
+  self.leads.outputTop:fire(self.id)
+  self.leads.outputBottom:fire(self.id)
+end
+
+function SPLITGate:state()
+  if self.leads.input.fired then
+    return "fired"
+  end
+end
+
+
 FLIPFLOPGate = class(Gate)

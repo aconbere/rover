@@ -12,18 +12,17 @@ function love.load()
   world = World.new(width, height)
   mouse = Listener.new()
 
-  sensors = {
-    Sensor.new(80,180, world, mouse),
-    Sensor.new(80,80, world, mouse)
-  }
+  sensors = { Sensor.new(80,180, world, mouse)
+            , Sensor.new(80,80, world, mouse)
+            }
 
   toolbar = world:addObject(Toolbar.circuitDesign(world, mouse))
 
-  gates = {
-    ANDGate.new(120, 20, world, mouse),
-    ORGate.new(140, 60, world, mouse),
-    XORGate.new(160, 100, world, mouse),
-  }
+  gates = { ANDGate.new(120, 20, world, mouse)
+          , ORGate.new(140, 60, world, mouse)
+          , XORGate.new(160, 100, world, mouse)
+          , SPLITGate.new(200, 100, world, mouse)
+          }
 end
 
 function love.keypressed(k)
