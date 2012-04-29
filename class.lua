@@ -1,4 +1,6 @@
-function class (base)
+Class = {}
+
+function Class.class (base)
   local c = {}
 
   if base then
@@ -31,6 +33,8 @@ function class (base)
   return c
 end
 
+return Class
+
 --[[
 
 A = class()
@@ -61,3 +65,4 @@ B = class(A)
 b = B.new(1,2)
 b:print()
 --]]
+

@@ -1,5 +1,6 @@
 require('class')
-require('circuit')
+
+require('circuit/circuit')
 
 Title = class()
 function Title:init(text, font)
@@ -112,9 +113,9 @@ function Toolbar.circuitDesign(world, mouse, font)
 
   local toolbar = Toolbar.new(world, mouse)
   toolbar:addItem(Title.new("Tools", font))
-  toolbar:addItem(Choice.new(AND, ANDGate, world, mouse))
-  toolbar:addItem(Choice.new(OR, ORGate, world, mouse))
-  toolbar:addItem(Choice.new(XOR, XORGate, world, mouse))
+  toolbar:addItem(Choice.new(AND, circuit.ANDGate, world, mouse))
+  toolbar:addItem(Choice.new(OR, circuit.ORGate, world, mouse))
+  toolbar:addItem(Choice.new(XOR, circuit.XORGate, world, mouse))
   toolbar:setup()
   return toolbar
 end

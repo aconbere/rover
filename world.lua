@@ -1,6 +1,6 @@
-require('class')
+local class = require('class').class
 
-World = class()
+local World = class()
 
 function World:init(width, height)
   self.width = width
@@ -58,3 +58,5 @@ end
 function World:removeObject(id)
   self.objects[id] = nil
 end
+
+return World

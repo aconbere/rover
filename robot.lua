@@ -1,12 +1,12 @@
-require('class')
+class = require('class').class
 
-directions = { up = {0, -1},
-               down = {0, 1},
-               left = {-1, 0},
-               right = {1, 0},
-             }
+local directions = { up = {0, -1},
+                     down = {0, 1},
+                     left = {-1, 0},
+                     right = {1, 0},
+                   }
 
-Robot = class()
+local Robot = class()
 
 function Robot:init(arg)
   self.x     = arg.x
@@ -46,3 +46,5 @@ function Robot:move(dt)
   self.x = self.x + (v[1] * self.speed * dt)
   self.y = self.y + (v[2] * self.speed * dt)
 end
+
+return Robot

@@ -1,9 +1,15 @@
-require('world')
+local World = require('world')
+local Robot = require('robot')
+
 require('draggable')
-require('robot')
-require('circuit')
 require('toolbar')
 require('events')
+
+local Sensor = require('circuit/sensor')
+local ANDGate = require('circuit/and')
+local ORGate = require('circuit/or')
+local XORGate = require('circuit/xor')
+local SPLITGate = require('circuit/split')
 
 function love.load()
   local height = love.graphics.getHeight()
