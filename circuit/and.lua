@@ -1,4 +1,4 @@
-local class = require("class").class
+local class = require("class")
 local Gate  = require("circuit/gate")
 local Lead  = require("circuit/lead")
 

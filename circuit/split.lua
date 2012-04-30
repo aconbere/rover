@@ -1,4 +1,4 @@
-class = require("class").class
+class = require("class")
 Gate = require("circuit/gate")
 Lead = require("circuit/lead")
 

@@ -1,4 +1,6 @@
-local class = require("class").class
+require('math')
+
+local class = require("class")
 local config = require("config")
 
 local Gate = class({ x = nil

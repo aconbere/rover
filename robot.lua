@@ -1,4 +1,4 @@
-class = require('class').class
+local class = require('class')
 
 local directions = { up = {0, -1},
                      down = {0, 1},

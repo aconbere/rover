@@ -1,8 +1,10 @@
-require('class')
+local class = require('class')
+local ANDGate = require("circuit/and")
+local ORGate = require("circuit/or")
+local XORGate = require("circuit/xor")
+local SPLITGate = require("circuit/split")
 
-require('circuit/circuit')
-
-Title = class()
+local Title = class()
 function Title:init(text, font)
   self.text = text
   self.font = font
@@ -18,7 +20,7 @@ function Title:draw()
   love.graphics.setColorMode("replace")
 end
 
-Choice = class()
+local Choice = class()
 function Choice:init(image, source, world, mouse)
   self.world = world
   self.width = image:getWidth() + 5
@@ -64,7 +66,7 @@ function Choice:draw()
   love.graphics.setColor(0, 0, 0)
 end
 
-Toolbar = class({ name = "toolbar" })
+local Toolbar = class({ name = "toolbar" })
 function Toolbar:init(world, mouse)
   self.items = {}
   self.maxWidth = 0
@@ -113,9 +115,11 @@ function Toolbar.circuitDesign(world, mouse, font)
 
   local toolbar = Toolbar.new(world, mouse)
   toolbar:addItem(Title.new("Tools", font))
-  toolbar:addItem(Choice.new(AND, circuit.ANDGate, world, mouse))
-  toolbar:addItem(Choice.new(OR, circuit.ORGate, world, mouse))
-  toolbar:addItem(Choice.new(XOR, circuit.XORGate, world, mouse))
+  toolbar:addItem(Choice.new(AND, ANDGate, world, mouse))
+  toolbar:addItem(Choice.new(OR, ORGate, world, mouse))
+  toolbar:addItem(Choice.new(XOR, XORGate, world, mouse))
   toolbar:setup()
   return toolbar
 end
+
+return Toolbar

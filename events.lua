@@ -1,12 +1,12 @@
-require('class')
+local class = require('class')
 
-Listener = class()
+local EventListener = class()
 
-function Listener:init()
+function EventListener:init()
   self.listeners = {}
 end
 
-function Listener:trigger(name, ...)
+function EventListener:trigger(name, ...)
   if self.listeners[name] then
     for i, callback in ipairs(self.listeners[name]) do
       if callback(...) == false then
@@ -16,10 +16,12 @@ function Listener:trigger(name, ...)
   end
 end
 
-function Listener:register(event, callback)
+function EventListener:register(event, callback)
   if not self.listeners[event] then
     self.listeners[event] = {}
   end
 
   table.insert(self.listeners[event], callback)
 end
+
+return EventListener

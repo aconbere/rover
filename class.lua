@@ -1,6 +1,6 @@
-Class = {}
+local _M = {}
 
-function Class.class (base)
+function _M.class (base)
   local c = {}
 
   if base then
@@ -33,7 +33,7 @@ function Class.class (base)
   return c
 end
 
-return Class
+return _M.class
 
 --[[
 

@@ -1,4 +1,4 @@
-local class = require("class").class
+local class = require("class")
 local config = require("config")
 local Wire = require("circuit/wire")
 

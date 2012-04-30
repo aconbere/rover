@@ -2,9 +2,9 @@ local World = require('world')
 local Robot = require('robot')
 
 require('draggable')
-require('toolbar')
-require('events')
 
+local EventListener = require('events')
+local Toolbar = require('toolbar')
 local Sensor = require('circuit/sensor')
 local ANDGate = require('circuit/and')
 local ORGate = require('circuit/or')
@@ -16,7 +16,7 @@ function love.load()
   local width = love.graphics.getWidth()
 
   world = World.new(width, height)
-  mouse = Listener.new()
+  mouse = EventListener.new()
 
   sensors = { Sensor.new(80,180, world, mouse)
             , Sensor.new(80,80, world, mouse)
@@ -40,8 +40,6 @@ end
 function love.update(dt)
   mouse:trigger("update", love.mouse.getX(), love.mouse.getY())
   simulate(dt)
-  --Draggable.update(love.mouse.getX(), love.mouse.getY())
-
   --robot:move(dt)
   --[[
   if love.keyboard.isDown('right') then
