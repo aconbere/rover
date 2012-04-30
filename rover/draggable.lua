@@ -1,4 +1,6 @@
-function Draggable(o, mouse)
+local _M = {}
+
+function _M.Draggable(o, mouse)
   o.__offsetX = 0
   o.__offsetY = 0
   o.__active = false
@@ -31,3 +33,5 @@ function Draggable(o, mouse)
     end
   end)
 end
+
+return _M.Draggable

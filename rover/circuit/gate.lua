@@ -1,7 +1,8 @@
 require('math')
 
-local class = require("class")
-local config = require("config")
+local class  = require("rover/class")
+local config = require("rover/config")
+local Draggable = require("rover/draggable")
 
 local Gate = class({ x = nil
                    , y = nil
@@ -9,12 +10,12 @@ local Gate = class({ x = nil
                    })
 
 function Gate:init(x, y, world, mouse)
-  self:setX(x)
-  self:setY(y)
-
   self.world = world
   self.mouse = mouse
   self.timeSince = 0
+
+  self:setX(x)
+  self:setY(y)
 
   Draggable(self, mouse)
 end
@@ -63,8 +64,8 @@ end
 function Gate:setX(x)
   if x < 80 then
     self.__x = 80 
-  elseif x > world.width then
-    self.__x = world.width
+  elseif x > self.world.width then
+    self.__x = self.world.width
   else
     self.__x = x
   end
@@ -73,8 +74,8 @@ end
 function Gate:setY(y)
   if y < 0 then
     self.__y = 0
-  elseif y > world.height then
-    self.__y = world.height
+  elseif y > self.world.height then
+    self.__y = self.world.height
   else
     self.__y = y
   end

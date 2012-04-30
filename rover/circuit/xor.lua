@@ -1,10 +1,10 @@
-local class = require("class")
-local Gate = require("circuit/gate")
-local Lead = require("circuit/lead")
+local class = require("rover/class")
+local Gate = require("rover/circuit/gate")
+local Lead = require("rover/circuit/lead")
 
 XORGate = class(Gate)
 XORGate.mixin({ type      = "xor"
-              , image     = love.graphics.newImage('xor.png')
+              , image     = love.graphics.newImage('rover/graphics/xor.png')
               , direction = { 1, 0 }
               })
 

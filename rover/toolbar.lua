@@ -1,8 +1,8 @@
-local class = require('class')
-local ANDGate = require("circuit/and")
-local ORGate = require("circuit/or")
-local XORGate = require("circuit/xor")
-local SPLITGate = require("circuit/split")
+local class = require('rover/class')
+local ANDGate = require("rover/circuit/and")
+local ORGate = require("rover/circuit/or")
+local XORGate = require("rover/circuit/xor")
+local SPLITGate = require("rover/circuit/split")
 
 local Title = class()
 function Title:init(text, font)
@@ -40,7 +40,7 @@ function Choice:init(image, source, world, mouse)
   mouse:register("mousepressed", function (mx,my,button)
     if button == "l" then
       if self:intersect(mx, my) then
-        c = self.source.new(mx, my, world, mouse)
+        local c = self.source.new(mx, my, world, mouse)
         c.__active = true
         c.__offsetX = mx - self.x
         c.__offsetY = my - self.y
@@ -108,9 +108,9 @@ function Toolbar:setup()
 end
 
 function Toolbar.circuitDesign(world, mouse, font)
-  local AND = love.graphics.newImage("and.png")
-  local XOR = love.graphics.newImage("xor.png")
-  local OR = love.graphics.newImage("or.png")
+  local AND  = love.graphics.newImage("rover/graphics/and.png")
+  local XOR  = love.graphics.newImage("rover/graphics/xor.png")
+  local OR   = love.graphics.newImage("rover/graphics/or.png")
   local font = love.graphics.newFont(24)
 
   local toolbar = Toolbar.new(world, mouse)

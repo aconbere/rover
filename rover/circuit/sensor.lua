@@ -1,5 +1,5 @@
-local class = require("class")
-local config = require("config")
+local class = require("rover/class")
+local config = require("rover/config")
 
 local Sensor = class()
 

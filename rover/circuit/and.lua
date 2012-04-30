@@ -1,11 +1,11 @@
-local class = require("class")
-local Gate  = require("circuit/gate")
-local Lead  = require("circuit/lead")
+local class = require("rover/class")
+local Gate  = require("rover/circuit/gate")
+local Lead  = require("rover/circuit/lead")
 
 local ANDGate = class(Gate)
 
 ANDGate.mixin({ type      = "and"
-              , image     = love.graphics.newImage('and.png')
+              , image     = love.graphics.newImage('rover/graphics/and.png')
               , direction = { 1, 0 }
               })
 function ANDGate:init(x, y, world, mouse)

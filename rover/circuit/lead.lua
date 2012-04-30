@@ -1,6 +1,6 @@
-local class = require("class")
-local config = require("config")
-local Wire = require("circuit/wire")
+local class  = require("rover/class")
+local config = require("rover/config")
+local Wire   = require("rover/circuit/wire")
 
 local Lead = class({ type = "lead" })
 

@@ -1,9 +1,9 @@
-local class = require("class")
-local Gate = require("circuit/gate")
+local class = require("rover/class")
+local Gate = require("rover/circuit/gate")
 
 local ORGate = class(Gate)
 ORGate.mixin({ type      = "or"
-             , image     = love.graphics.newImage('or.png')
+             , image     = love.graphics.newImage('rover/graphics/or.png')
              , direction = { 1, 0 }
              })
 

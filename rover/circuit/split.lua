@@ -1,10 +1,10 @@
-class = require("class")
-Gate = require("circuit/gate")
-Lead = require("circuit/lead")
+class = require("rover/class")
+Gate = require("rover/circuit/gate")
+Lead = require("rover/circuit/lead")
 
 SPLITGate = class(Gate)
 SPLITGate.mixin({ type      = "split"
-                , image     = love.graphics.newImage("split.png")
+                , image     = love.graphics.newImage("rover/graphics/split.png")
                 , direction = { 1, 0 }
                 })
 function SPLITGate:init(x, y, world, mouse)

@@ -1,4 +1,4 @@
-local class = require('class')
+local class = require('rover/class')
 
 local World = class()
 
