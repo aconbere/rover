@@ -73,7 +73,6 @@ function love.mousereleased(x,y,button)
 end
 
 function simulate(dt)
-  -- fake sensor fires in our simulation
   for i, gate in ipairs(Rover.gates) do
     gate:update(dt)
   end
